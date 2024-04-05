@@ -11,7 +11,7 @@ app.get('/', (req, res) => {
     //res.send('hello world');
 });
 app.get('/csv-data', (req, res) => {
-    const csvPath = path.join(__dirname, '..', 'data', 'zonal_sea_averages.csv');
+    const csvPath = path.join(__dirname, '..', 'data', 'airtravel.csv');
     fs.readFile(csvPath, 'utf8', (err, data) => {
         if (err) { 
             console.error(err);

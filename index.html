@@ -1,12 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
-</head>
-<body>
-    
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>XHR and Graph</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  </head>
+  <body>
+   <h1>Monthly Transatlantic Air Travel</h1>
+   <canvas id="myChart" width="400" height="200"></canvas>
+    <script>
+      window.addEventListener("load", fetchData);
+      function fetchData() {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://localhost:3000/csv-data", true);
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            let data = xhr.responseText;
+            const globalTemps = processData(data);
+            renderChart(globalTemps)
+            // console.log(globalTemps);
+          } else {
+            console.log("Error", xhr.statusText);
+          }
+        };
+        xhr.send();
+      }
+      function processData(data) {
+        const months = [];
+        const passengers1 = [];
+        const passengers2 = [];
+        const passengers3 = [];
+        rows = data.split("\n").slice(1);
+        rows.forEach((row) => {
+          const cols = row.split(",");
+
+          months.push(cols[0]);
+          passengers1.push(parseFloat(cols[1]));
+          passengers2.push(parseFloat(cols[2]));
+          passengers3.push(parseFloat(cols[3]));
+
+          //console.log(cols[0]);
+        });
+        return{ months, passengers1, passengers2, passengers3 };
+      }
+
+
+      function renderChart(data) {
+        console.log("hi from renderChart", data);
+        const ctx = document.getElementById('myChart');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+            labels: data.months,
+            datasets: [
+            {
+              label: '1958',
+              data: data.passengers1,
+              borderColor: 'rgba(0, 0,255,1)',
+              backgroundColor: 'rgba(255, 99, 132, 0.5)',
+              // yAxisID: 'y',
+            },
+            {
+              label: '1959',
+              data: data.passengers2,
+              borderColor: 'rgba(80, 255,160,1)',
+              backgroundColor: 'rgba(255, 99, 132, 0.5)',
+              // yAxisID: 'y1',
+            },
+            {
+              label: '1960',
+              data: data.passengers3,
+              borderColor: 'rgba(255, 0,0,1)',
+              backgroundColor: 'rgba(255, 99, 132, 0.5)',
+              // yAxisID: 'y2',
+            }
+            
+          ]
+            },
+            options: {
+            }
+        });
+      }
+    </script>
+  </body>
 </html>
